@@ -149,8 +149,9 @@ function testParseBulkReply() {
     var a = new ReplyStream();
     a.on("reply", function (reply) {
         checkEqual(reply.replyType, redisclient.BULK, "testParseBulkReply a-0");
-        check(reply.replyValue instanceof Buffer, "testParseBulkReply a-1");
-        checkEqual(reply.replyValue.utf8Slice(0, reply.replyValue.length), "FOOBAR", "testParseBulkReply a-2");
+//        check(reply.replyValue instanceof Buffer, "testParseBulkReply a-1");
+//        checkEqual(reply.replyValue.utf8Slice(0, reply.replyValue.length), "FOOBAR", "testParseBulkReply a-2");
+        checkEqual(reply.replyValue, "FOOBAR", "testParseBulkReply a-2");
     });
     a.handleData(bufferFromString("$6\r\nFOOBAR\r\n"));
 
@@ -172,18 +173,18 @@ function testParseMultiBulkReply() {
         checkEqual(reply.replyType, redisclient.MULTIBULK, "testParseMultiBulkReply a-0");
         check(reply.replyValue instanceof Array, "testParseMultiBulkReply a-1");
         checkEqual(reply.replyValue.length, 4, "testParseMultiBulkReply a-2");
-        check(reply.replyValue[0].replyType === redisclient.BULK, "testParseMultiBulkReply a-3");
-        check(reply.replyValue[1].replyType === redisclient.BULK, "testParseMultiBulkReply a-4");
-        check(reply.replyValue[2].replyType === redisclient.BULK, "testParseMultiBulkReply a-5");
-        check(reply.replyValue[3].replyType === redisclient.BULK, "testParseMultiBulkReply a-6");
-        checkEqual(reply.replyValue[0].replyValue.length, 3, "testParseMultiBulkReply a-11");
-        checkEqual(reply.replyValue[1].replyValue.length, 3, "testParseMultiBulkReply a-12");
-        checkEqual(reply.replyValue[2].replyValue.length, 5, "testParseMultiBulkReply a-13");
-        checkEqual(reply.replyValue[3].replyValue.length, 6,  "testParseMultiBulkReply a-14");
-        checkEqual(reply.replyValue[0].replyValue, 'FOO',   "testParseMultiBulkReply a-15");
-        checkEqual(reply.replyValue[1].replyValue, 'BAR',   "testParseMultiBulkReply a-16");
-        checkEqual(reply.replyValue[2].replyValue, 'HELLO', "testParseMultiBulkReply a-17");
-        checkEqual(reply.replyValue[3].replyValue, 'WORLD!', "testParseMultiBulkReply a-18");
+        check(reply.replies[0].replyType === redisclient.BULK, "testParseMultiBulkReply a-3");
+        check(reply.replies[1].replyType === redisclient.BULK, "testParseMultiBulkReply a-4");
+        check(reply.replies[2].replyType === redisclient.BULK, "testParseMultiBulkReply a-5");
+        check(reply.replies[3].replyType === redisclient.BULK, "testParseMultiBulkReply a-6");
+        checkEqual(reply.replyValue[0].length, 3, "testParseMultiBulkReply a-11");
+        checkEqual(reply.replyValue[1].length, 3, "testParseMultiBulkReply a-12");
+        checkEqual(reply.replyValue[2].length, 5, "testParseMultiBulkReply a-13");
+        checkEqual(reply.replyValue[3].length, 6,  "testParseMultiBulkReply a-14");
+        checkEqual(reply.replyValue[0], 'FOO',   "testParseMultiBulkReply a-15");
+        checkEqual(reply.replyValue[1], 'BAR',   "testParseMultiBulkReply a-16");
+        checkEqual(reply.replyValue[2], 'HELLO', "testParseMultiBulkReply a-17");
+        checkEqual(reply.replyValue[3], 'WORLD!', "testParseMultiBulkReply a-18");
     });
     a.handleData(bufferFromString("*4\r\n$3\r\nFOO\r\n$3\r\nBAR\r\n$5\r\nHELLO\r\n$6\r\nWORLD!\r\n"));
 
@@ -199,12 +200,12 @@ function testParseMultiBulkReply() {
         checkEqual(reply.replyType, redisclient.MULTIBULK, "testParseMultiBulkReply c-0");
         check(reply.replyValue instanceof Array, "testParseMultiBulkReply c-1");
         checkEqual(reply.replyValue.length, 3, "testParseMultiBulkReply c-2");
-        check(reply.replyValue[0].replyType === redisclient.BULK, "testParseMultiBulkReply c-3");
-        check(reply.replyValue[1].replyType === redisclient.BULK, "testParseMultiBulkReply c-4");
-        check(reply.replyValue[2].replyType === redisclient.BULK, "testParseMultiBulkReply c-5");
-        checkEqual(reply.replyValue[0].replyValue, 'FOO', "testParseMultiBulkReply c-6");
-        checkEqual(reply.replyValue[1].replyValue, null, "testParseMultiBulkReply c-7");
-        checkEqual(reply.replyValue[2].replyValue, 'BARZ', "testParseMultiBulkReply c-8");
+        check(reply.replies[0].replyType === redisclient.BULK, "testParseMultiBulkReply c-3");
+        check(reply.replies[1].replyType === redisclient.BULK, "testParseMultiBulkReply c-4");
+        check(reply.replies[2].replyType === redisclient.BULK, "testParseMultiBulkReply c-5");
+        checkEqual(reply.replyValue[0], 'FOO', "testParseMultiBulkReply c-6");
+        checkEqual(reply.replyValue[1], null, "testParseMultiBulkReply c-7");
+        checkEqual(reply.replyValue[2], 'BARZ', "testParseMultiBulkReply c-8");
     });
     c.handleData(bufferFromString("*3\r\n$3\r\nFOO\r\n$-1\r\n$4\r\nBARZ\r\n"));
 
@@ -216,13 +217,13 @@ function testParseMultiBulkReply() {
         checkEqual(reply.replyType, redisclient.MULTIBULK, "testParseMultiBulkReply d-0");
         check(reply.replyValue instanceof Array, "testParseMultiBulkReply d-1");
         checkEqual(reply.replyValue.length, 3, "testParseMultiBulkReply d-2");
-        check(reply.replyValue[0].replyType === redisclient.BULK, "testParseMultiBulkReply d-3");
-        check(reply.replyValue[1].replyType === redisclient.BULK, "testParseMultiBulkReply d-4");
-        check(reply.replyValue[2].replyType === redisclient.INTEGER, "testParseMultiBulkReply d-5");
-        checkEqual(typeof(reply.replyValue[2].replyValue), "number", "testParseMultiBulkReply d-8");
-        checkEqual(reply.replyValue[0].replyValue, 'subscribe', "testParseMultiBulkReply d-9");
-        checkEqual(reply.replyValue[1].replyValue, '#redis', "testParseMultiBulkReply d-10");
-        checkEqual(reply.replyValue[2].replyValue, 1, "testParseMultiBulkReply d-11");
+        check(reply.replies[0].replyType === redisclient.BULK, "testParseMultiBulkReply d-3");
+        check(reply.replies[1].replyType === redisclient.BULK, "testParseMultiBulkReply d-4");
+        check(reply.replies[2].replyType === redisclient.INTEGER, "testParseMultiBulkReply d-5");
+        checkEqual(typeof(reply.replies[2].replyValue), "number", "testParseMultiBulkReply d-8");
+        checkEqual(reply.replyValue[0], 'subscribe', "testParseMultiBulkReply d-9");
+        checkEqual(reply.replyValue[1], '#redis', "testParseMultiBulkReply d-10");
+        checkEqual(reply.replyValue[2], 1, "testParseMultiBulkReply d-11");
     });
     d.handleData(bufferFromString("*3\r\n$9\r\nsubscribe\r\n$6\r\n#redis\r\n:1\r\n"));
 
@@ -375,7 +376,8 @@ function testSETANDGETMULTIBYTE() {
 
     client.get('testUtf8Key', function (err, value) {
         if (err) assert.fail(err, "testSETANDGETMULTIBYTE");
-        checkEqual(value.utf8Slice(0, value.length), testValue, "testSETANDGETMULTIBYTE");
+//        checkEqual(value.utf8Slice(0, value.length), testValue, "testSETANDGETMULTIBYTE");
+        checkEqual(value, testValue, "testSETANDGETMULTIBYTE");
     });
 }
 
