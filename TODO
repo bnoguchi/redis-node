@@ -1,3 +1,4 @@
+Add in consistent hashing.
 Phase out commandConfig.
 Improve transaction support.
 Make all commands more idiomatic to invoke.
