@@ -1,7 +1,9 @@
+Add a better test suite based on vows framework.
+Benchmarks
+Improve transaction support.
 Remove TODOs
 Add in consistent hashing.
 Phase out commandConfig.
-Improve transaction support.
 Make all commands more idiomatic to invoke.
 Replace (hash[key] && ...) with (hash.hasOwnProperty(key) && doSomethingWith(hash[key]))
 Add in UDP protocol support.
