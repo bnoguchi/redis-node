@@ -1,9 +1,6 @@
-// TODO Transactions
-// TODO Test transaction atomicity
 // TODO Allow passing of arrays back to mget
 // TODO Allow passing of arrays to mset
 // TODO Test sort with STORE option
-
 
 var sys = require("sys"),
     vows = require("vows"),
