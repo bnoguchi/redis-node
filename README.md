@@ -3,6 +3,10 @@
 
 Blog post coming.
 
+### Features include:
+- Full transactional support (including nested transactions) (i.e., MULTI/EXEC) (to my knowledge, not present in [redis-node-client](http://github.com/fictorial/redis-node-client.git).
+- Test coverage of nearly all the Redis commands.
+
 ### Dependencies
 The Vows Testing Framework:
 From git:
