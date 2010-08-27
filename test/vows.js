@@ -19,7 +19,7 @@ vows.describe("Redis").addBatch({
 
         'should return the information as a hash': function (err, info) {
             assert.isObject(info);
-            ['redis_version', 'redis_git_sha1', 'redis_git_dirty', 'arch_bits', 'multiplexing_api', 'process_id', 'uptime_in_seconds', 'uptime_in_days', 'connected_clients', 'connected_slaves', 'blocked_clients', 'used_memory', 'used_memory_human', 'changes_since_last_save', 'bgsave_in_progress', 'last_save_time', 'bgrewriteaof_in_progress', 'total_connections_received', 'total_commands_processed', 'expired_keys', 'hash_max_zipmap_entries', 'hash_max_zipmap_value', 'pubsub_channels', 'pubsub_patterns', 'vm_enabled', 'role', 'db6'].forEach( function (key) {
+            ['redis_version', 'redis_git_sha1', 'redis_git_dirty', 'arch_bits', 'multiplexing_api', 'process_id', 'uptime_in_seconds', 'uptime_in_days', 'connected_clients', 'connected_slaves', 'blocked_clients', 'used_memory', 'used_memory_human', 'changes_since_last_save', 'bgsave_in_progress', 'last_save_time', 'bgrewriteaof_in_progress', 'total_connections_received', 'total_commands_processed', 'expired_keys', 'hash_max_zipmap_entries', 'hash_max_zipmap_value', 'pubsub_channels', 'pubsub_patterns', 'vm_enabled', 'role'].forEach( function (key) {
                 assert.include(info, key);
                 assert.isString(info[key]);
             });
