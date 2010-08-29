@@ -20,6 +20,20 @@ vows.describe("Redis Transactions").addBatch({
             assert.equal(count, 3);
         }
     }),
+    'with proper syntax with multibulk': usingClient({
+        topic: function (client) {
+            var self = this;
+            client.rpush("txn1-a", 1);
+            client.rpush("txn1-a", 2);
+            client.rpush("txn1-a", 3);
+            client.transaction( function () {
+               client.lrange("txn1-a", 0, -1, self.callback); 
+            });
+        },
+        'should return the correct list': function (err, list) {
+          assert.deepEqual(list, [1,2,3]);
+        }
+    }),
     'nested': usingClient({
         topic: function (client) {
             var self = this;
