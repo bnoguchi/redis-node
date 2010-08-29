@@ -34,6 +34,20 @@ vows.describe("Redis Transactions").addBatch({
           assert.deepEqual(list, [1,2,3]);
         }
     }),
+    'with commands that require special reply interpretation': usingClient({
+        topic: function (client) {
+            var self = this;
+            client.zadd("txn1-b", 1, 1);
+            client.zadd("txn1-b", 2, 2);
+            client.zadd("txn1-b", 3, 3);
+            client.transaction( function () {
+               client.zrange("txn1-b", 0, -1, self.callback); 
+            });
+        },
+        'should return the correct result': function (err, list) {
+            assert.deepEqual(list, [1, 2, 3]);
+        }
+    }),
     'nested': usingClient({
         topic: function (client) {
             var self = this;
