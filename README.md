@@ -20,18 +20,18 @@ From git:
     git clone http://github.com/bnoguchi/redis-node.git
 Npm installation coming...
 
-### Example
-See test/ for examples of each command.
-
-Creating a Client:
+### A Quick Tour
     var redis = require("redis");
-    var client = redis.createClient();
+    var client = redis.createClient();    // Create the client
     client.select(2);                     // Select database 2
 
     client.set("hello", "world", function (err, status) {
       if (err) throw err;
       sys.log(status); // true
     });
+
+    // We may or may not be connected yet, but that's ok, since
+    // the client queues up any commands.
 
     // The commands are also idiomatic
     client.hmset("hash", { t: "rex", steg: "asaurus" }, function (err, status) {
@@ -56,7 +56,8 @@ Creating a Client:
     client.transaction( function () {
       client.set("I'm missing a 2nd argument"); // This will make our client discard the transaction
     });
-    
+
+See test/ for examples of each command.
 
 ### Test Coverage
 See [./test/](http://github.com/bnoguchi/redis-node) for the list of tests.
