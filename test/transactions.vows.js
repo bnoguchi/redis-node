@@ -48,6 +48,20 @@ vows.describe("Redis Transactions").addBatch({
             assert.deepEqual(list, [1, 2, 3]);
         }
     }),
+    'with hgetall': usingClient({
+        topic: function (client) {
+            var self = this;
+            client.hmset("txn1-c", {a: 1, b: 2});
+            client.transaction( function () {
+               client.hget("txn1-c", "a"); 
+               client.hget("txn1-c", "b"); 
+               client.hgetall("txn1-c", self.callback); 
+            });
+        },
+        'should transform the result just as it would outside a transaction': function (err, hash) {
+            assert.deepEqual(hash, {a: 1, b: 2});
+        }
+    }),
     'nested': usingClient({
         topic: function (client) {
             var self = this;
