@@ -4,7 +4,9 @@
 Blog post coming.
 
 ### Features include:
-- Full transactional support (including nested transactions) (i.e., MULTI/EXEC) (to my knowledge, not present in [redis-node-client](http://github.com/fictorial/redis-node-client.git).
+- Support for all Redis commands.
+- Full transactional support (including nested transactions) (i.e., MULTI/EXEC/DISCARD) (to my knowledge, not present in [redis-node-client](http://github.com/fictorial/redis-node-client)).
+- Idiomatic command syntax.
 - Automatic re-establishment of connections to the Redis server.
 - Test coverage of nearly all the Redis commands.
 
@@ -63,6 +65,11 @@ See test/ for examples of each command.
 See [./test/](http://github.com/bnoguchi/redis-node) for the list of tests.
 To run the tests from the command line.
     vows test/*.vows.js
+
+### Coming Sooner or Later
+- Benchmarks
+- A distributed API for interacting with a Redis cluster.
+- UDP Support
 
 ### License
 MIT License
