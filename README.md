@@ -4,7 +4,8 @@
 Blog post coming.
 
 ### Features include:
-- Support for all Redis commands.
+- Fully asynchronous.
+- Support for all Redis commands, including PUBSUB commands.
 - Full transactional support (including nested transactions) (i.e., MULTI/EXEC/DISCARD) (to my knowledge, not present in [redis-node-client](http://github.com/fictorial/redis-node-client)).
 - Idiomatic command syntax.
 - Automatic re-establishment of connections to the Redis server.
@@ -70,6 +71,11 @@ To run the tests from the command line.
 - Benchmarks
 - A distributed API for interacting with a Redis cluster.
 - UDP Support
+
+### Contributors
+-[Brian Noguchi](http://github.com/bnoguchi)
+-Tim Smart(http://github.com/Tim-Smart)
+-Graeme Worthy(http://github.com/graemeworthy)
 
 ### License
 MIT License

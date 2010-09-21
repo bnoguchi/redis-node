@@ -1,0 +1,23 @@
+{
+  "name": "redis-node",
+  "description": "A Complete Redis Client for Node.js",
+  "version": "0.2.0",
+  "keywords": [ "redis", "node", "client", "redis-client", "redis-node" ],
+  "author": "Brian Noguchi <brian.noguchi@gmail.com>",
+  "contributors": [
+    { "name": "Brian Noguchi", "web": "http://ngchi.wordpress.com" },
+    { "name": "Tim Smart", "web": "http://github.com/Tim-Smart" },
+    { "name": "Graeme Worthy", "web": "http://github.com/graemeworthy" }
+  ],
+  "licenses": [ "MIT" ],
+  "repository": {
+    "type": "git",
+    "url": "http://github.com/bnoguchi/redis-node.git"
+  },
+  "bugs": { "web": "http://github.com/bnoguchi/redis-node/issues" },
+  "directories": { "lib": "./lib", "test": "./test" },
+  "os": [ "linux", "darwin" ],
+  "dependencies": {},
+  "engines": { "node":  ">=0.2.0" },
+  "main": "./index.js"
+}
