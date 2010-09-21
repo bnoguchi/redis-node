@@ -5,7 +5,8 @@ Blog post coming.
 
 ### Features include:
 - Fully asynchronous.
-- Support for all Redis commands, including PUBSUB commands.
+- Support for all Redis commands.
+- PUBLISH and SUBSCRIBE support.
 - Full transactional support (including nested transactions) (i.e., MULTI/EXEC/DISCARD) (to my knowledge, not present in [redis-node-client](http://github.com/fictorial/redis-node-client)).
 - Idiomatic command syntax.
 - Automatic re-establishment of connections to the Redis server.
@@ -19,9 +20,13 @@ Or from npm:
     npm install vows
 
 ### Installation
+From npm:
+    npm install redis-node
+
+OR
+
 From git:
     git clone http://github.com/bnoguchi/redis-node.git
-Npm installation coming...
 
 ### A Quick Tour
     var redis = require("redis");
@@ -76,6 +81,10 @@ To run the tests from the command line.
 -[Brian Noguchi](http://github.com/bnoguchi)
 -[Tim Smart](http://github.com/Tim-Smart)
 -[Graeme Worthy](http://github.com/graemeworthy)
+
+### Other Redis Clients for Node.js
+-[redis-node-client](http://github.com/fictorial/redis-node-client)
+-[redis](http://github.com/mranney/node_redis)
 
 ### License
 MIT License
