@@ -74,8 +74,8 @@ To run the tests from the command line.
 
 ### Contributors
 -[Brian Noguchi](http://github.com/bnoguchi)
--Tim Smart(http://github.com/Tim-Smart)
--Graeme Worthy(http://github.com/graemeworthy)
+-[Tim Smart](http://github.com/Tim-Smart)
+-[Graeme Worthy](http://github.com/graemeworthy)
 
 ### License
 MIT License
