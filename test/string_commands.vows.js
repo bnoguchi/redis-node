@@ -102,7 +102,7 @@ vows.describe("Redis String Commands").addBatch({
         },
         'and then getting the image, too': {
             topic: function (_, client) {
-                client.get('png_image', {isExpectingBinary: true}, this.callback);
+                client.get('png_image', {encoding: "binary"}, this.callback);
             },
             'should return the entire image': function (err, value) {
                 var paths = [ "sample.png", "test/sample.png" ],
