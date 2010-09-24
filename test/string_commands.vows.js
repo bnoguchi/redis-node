@@ -45,7 +45,7 @@ vows.describe("Redis String Commands").addBatch({
         topic: function (client) {
             var testValue = '\u00F6\u65E5\u672C\u8A9E', // ö日本語
                 buffer = new Buffer(32),
-                size = buffer.utf8Write(testValue,0);
+                size = buffer.write(testValue,0, "utf8");
             client.set("utf8-key", buffer.slice(0, size));
             client.get("utf8-key", this.callback);
         },
@@ -93,7 +93,7 @@ vows.describe("Redis String Commands").addBatch({
               }
             }
             var imageBuffer = new Buffer(Buffer.byteLength(fileContents));
-            imageBuffer.binaryWrite(fileContents, 0);
+            imageBuffer.write(fileContents, 0, "binary");
 
             client.set('png_image', imageBuffer, this.callback);
         },
@@ -116,7 +116,7 @@ vows.describe("Redis String Commands").addBatch({
                   }
                 }
                 var imageBuffer = new Buffer(Buffer.byteLength(fileContents));
-                imageBuffer.binaryWrite(fileContents, 0);
+                imageBuffer.write(fileContents, 0, "binary");
 
                 // TODO Make value binary a Buffer vs the current binary string?
                 assert.equal(value, imageBuffer.toString("binary"));

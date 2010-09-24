@@ -78,9 +78,9 @@ To run the tests from the command line.
 - UDP Support
 
 ### Contributors
--[Brian Noguchi](http://github.com/bnoguchi)
--[Tim Smart](http://github.com/Tim-Smart)
--[Graeme Worthy](http://github.com/graemeworthy)
+- [Brian Noguchi](http://github.com/bnoguchi)
+- [Tim Smart](http://github.com/Tim-Smart)
+- [Graeme Worthy](http://github.com/graemeworthy)
 
 ### Other Redis Clients for Node.js
 -[redis-node-client](http://github.com/fictorial/redis-node-client)

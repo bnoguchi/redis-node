@@ -182,13 +182,9 @@ vows.describe("Redis Sorted Set Commands").addBatch({
             topic: function (client) {
                 client.zrange("zset-12", 4, 5, this.callback);
             },
-            // TODO Figure out why null is being returned as opposed to []
-            'should return null': function (err, nil) {
-                assert.isNull(nil);
+            'should return an empty list': function (err, list) {
+                assert.deepEqual(list, []);
             }
-//            'should return an empty list': function (err, list) {
-//                assert.deepEqual(list, []);
-//            }
         },
         "with end >= zset's length": {
             topic: function (client) {
