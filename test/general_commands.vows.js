@@ -84,6 +84,24 @@ vows.describe("Redis General Commands").addBatch({
                 assert.equal(type, 'set');
             }
         },
+        'when a zset': {
+            topic: function (client) {
+                client.zadd("zset-type-key", 2, "a");
+                client.type("zset-type-key", this.callback);
+            },
+            "should return 'zset'": function (err, type) {
+                assert.equal(type, 'zset');
+            }
+        },
+        'when a hash': {
+            topic: function (client) {
+                client.hset("hash-type-key", "k", "v");
+                client.type("hash-type-key", this.callback);
+            },
+            "should return 'hash'": function (err, type) {
+                assert.equal(type, 'hash');
+            }
+        },
         'when a list': {
             topic: function (client) {
                 client.rpush("list-type-key", "a");
@@ -262,34 +280,58 @@ vows.describe("Redis General Commands").addBatch({
         }
     }),
 
-    'the command MOVE': usingClient({
-        topic: function (client) {
-            client.rpush("db-moving-key", "a");
-            client.move("db-moving-key", 5, this.callback);
-        },
-        'should return an integer reply of 1': function (err, reply) {
-            assert.equal(reply, 1);
-        },
-        'after moving, when in the source database': {
-            topic: function (_, client) {
-                client.exists("db-moving-key", this.callback);
+    'the command MOVE': {
+        'when the key exists in the source db but not the target db': usingClient({
+            topic: function (client) {
+                client.rpush("db-moving-key", "a");
+                client.move("db-moving-key", 5, this.callback);
             },
-            'should be absent from the source database': function (err, doesExist) {
-                assert.isFalse(doesExist);
+            'should return an integer reply of 1': function (err, reply) {
+                assert.equal(reply, 1);
             },
-            'after moving, when in the destination database': {
-                topic: function (_, _, client) {
-                    var client2 = redis.createClient();
-                    client2.select(5);
-                    client2.lrange("db-moving-key", 0, -1, this.callback);
-                    client2.flushdb();
+            'after moving, when in the source database': {
+                topic: function (_, client) {
+                    client.exists("db-moving-key", this.callback);
                 },
-                'should appear in the destination database': function (err, list) {
-                    assert.deepEqual(list, ["a"]);
-                }
+                'should be absent from the source database': function (err, doesExist) {
+                    assert.isFalse(doesExist);
+                },
+                'after moving, when in the destination database': {
+                    topic: function (_, _, client) {
+                        var client2 = redis.createClient();
+                        client2.select(5);
+                        client2.lrange("db-moving-key", 0, -1, this.callback);
+                        client2.flushdb();
+                    },
+                    'should appear in the destination database': function (err, list) {
+                        assert.deepEqual(list, ["a"]);
+                    }
+                },
+            }
+        }),
+
+        'when the key does not exist in the source db': usingClient({
+            topic: function (client) {
+                client.move("non-existing-db-moving-key", 5, this.callback);
             },
-        }
-    }),
+            'should return an integer reply of 0': function (err, reply) {
+                assert.equal(reply, 0);
+            }
+        }),
+
+        'when the key already exists in the target db': usingClient({
+            topic: function (client) {
+                client.select(5);
+                client.set("existing-db-moving-key", "hi");
+                client.select(6);
+                client.set("existing-db-moving-key", "hi");
+                client.move("non-existing-db-moving-key", 5, this.callback);
+            },
+            'should return an integer reply of 0': function (err, reply) {
+                assert.equal(reply, 0);
+            }
+        })
+    }
 }).addBatch({
     'the command DBSIZE': usingClient({
         topic: function (client) {
@@ -304,7 +346,6 @@ vows.describe("Redis General Commands").addBatch({
         }
     })
 }).addBatch({
-    // TODO EXPIREAT
     'the command EXPIRE': usingClient({
         'on a key without a current expiry': {
             topic: function (client) {
@@ -354,6 +395,64 @@ vows.describe("Redis General Commands").addBatch({
         'on a non-existent key': {
             topic: function (client) {
                 client.expire("non-existent-key", 2, this.callback);
+            },
+            "should return 0 to specify that the key doesn't exist": function (err, status) {
+                assert.equal(status, 0);
+            }
+        }
+    }),
+
+    // TODO PERSIST
+    // TODO Allow passing a date object to EXPIREAT
+    'the command EXPIREAT': usingClient({
+        'on a key without a current expiry': {
+            topic: function (client) {
+                client.set("to-expireat", "foo");
+                client.expireat("to-expireat", parseInt((+new Date) / 1000, 10) + 2, this.callback);
+            },
+
+            'should return 1': function (err, isTimeoutSetStatus) {
+                assert.equal(isTimeoutSetStatus, 1);
+            },
+
+            'after execution, before the time is up': {
+                topic: function (_, client) {
+                    client.exists("to-expireat", this.callback);
+                },
+
+                'should evaluate the key as existing': function (err, doesExist) {
+                    assert.isTrue(doesExist);
+                }
+            },
+
+            'after execution, after the time is up': {
+                topic: function (_, client) {
+                    var self = this;
+                    setTimeout(function () {
+                        client.exists("to-expireat", self.callback);
+                    }, 3000);
+                },
+
+                'should evaluate the key as non-existing': function (err, doesExist) {
+                    assert.isFalse(doesExist);
+                }
+            }
+        },
+
+        'on a key with a current expiry': {
+            topic: function (client) {
+                client.set("already-has-expiryat", "foo");
+                client.expireat("already-has-expiryat", parseInt((+new Date) / 1000, 10) + 2);
+                client.expireat("already-has-expiryat", parseInt((+new Date) / 1000, 10) + 12, this.callback);
+            },
+            "should return 0 to specify that the timeout wasn't set since the key already has an associated timeout": function (err, isTimeoutSetStatus) {
+                assert.equal(isTimeoutSetStatus, 0);
+            }
+        },
+
+        'on a non-existent key': {
+            topic: function (client) {
+                client.expireat("non-existent-key", parseInt((+new Date) / 1000, 10) + 2, this.callback);
             },
             "should return 0 to specify that the key doesn't exist": function (err, status) {
                 assert.equal(status, 0);
