@@ -30,7 +30,7 @@ From git:
     git clone http://github.com/bnoguchi/redis-node.git
 
 ### A Quick Tour
-    var redis = require("redis");
+    var redis = require("redis-node");
     var client = redis.createClient();    // Create the client
     client.select(2);                     // Select database 2
 
@@ -107,7 +107,7 @@ server. You can bind an event handler to any of the following events:
 
 ## Commands operating on all value types
 
-### `client.exists(key, callback)`
+### client.exists(key, callback)
 Test if a key exists.
 Passes `true` to callback if it exists.
 Passes `false` to callback if it does not.
@@ -115,14 +115,14 @@ Passes `false` to callback if it does not.
         console.log(doesExist);
     });
 
-### `client.del(key1, key2, ..., keyn, callback)`
+### client.del(key1, key2, ..., keyn, callback)
 Delete a key.
 Passes the number of keys that were deleted to `callback`.
     client.exists("key1", "key2", function (err, numRemoved) {
         console.log(numRemoved); // 2
     });
 
-### `client.type(key, callback)`
+### client.type(key, callback)
 Passes the type of value stored at key to `callback`. One of:
 - `none` if the key does not exist
 - `string` if the key contains a `String` value
@@ -134,7 +134,7 @@ Passes the type of value stored at key to `callback`. One of:
         console.log(type); // Either: 'none', 'string', 'list', 'set', 'zset', or 'hash'
     });
 
-### `client.keys(pattern, callback)`
+### client.keys(pattern, callback)
 Passes all the keys matching a given pattern to `callback`.
     // The * pattern returns an array of all keys
     client.keys("*", function (err, arrayOfKeys) {
@@ -157,20 +157,20 @@ Passes all the keys matching a given pattern to `callback`.
         });
     });
 
-### `client.randomkey(callback)`
+### client.randomkey(callback)
 Passes a random key from the key space to `callback`.
     client.randomkey( function (err, key) {
         console.log(key);
     });
 
-### `client.rename(oldName, newName, callback)`
+### client.rename(oldName, newName, callback)
 Renames the old key name `oldName` to the new key name `newName`
 Passes `true` to `callback`.
     client.rename("old", "new", function (err, didSucceed) {
         console.log(didSucceed); // true
     });
 
-### `client.renamenx(oldName, newName, callback)`
+### client.renamenx(oldName, newName, callback)
 Renames the old key name `oldName` to the new key name `newName`,
 if the `newName` key does not already exist.
 Passes `1` if `newName` key did not already exist, to `callback`.
@@ -179,13 +179,13 @@ Passes `0` if `newName` key did already exist, to `callback`.
         console.log(!!didSucceed); // true
     });
 
-### `client.dbsize(callback)`
+### client.dbsize(callback)
 Passes the number of keys in the current db.
     client.dbsize( function (err, numKeys) {
         console.log(numKeys);
     });
 
-### `client.expire(key, ttl, callback)`
+### client.expire(key, ttl, callback)
 Tells Redis to delete the `key` after `ttl` seconds.
 If we are using Redis < 2.1.3 and if a `ttl` was already set with 
 another prior `client.expire` invocation, then the new `ttl` does 
@@ -203,14 +203,14 @@ are using Redis < 2.1.3, and `key` already has a current `ttl` expiry.
         console.log(!!didSetExpiry);
     });
 
-### `client.expireat(key, unixtime, callback)`
+### client.expireat(key, unixtime, callback)
 Tells Redis to delete the `key` at the `unixtime` datetime in the future.
 Works similarly to `client.expire(key, ttl, callback)`
     client.expireat("key", parseInt((+new Date) / 1000, 10) + 2, function (err, didSetExpiry) {
         console.log(didSetExpiry);
     });
 
-### `client.ttl(key, callback)`
+### client.ttl(key, callback)
 Gets the time to live (i.e., how many seconds before `key` expires) in seconds
 of `key`.
 Passes the number of seconds before `key` expires to `callback`.
@@ -219,14 +219,14 @@ Passes `-1` to `callback` if `key` has no ttl expiry.
         console.log(ttl);
     });
 
-### `client.select(dbIndex, callback)`
+### client.select(dbIndex, callback)
 Selects the DB with the specified `dbIndex`.
 Passes `true` to `callback`.
     client.select(2, function (err, didSucceed) {
         console.log(didSucceed); // true
     });
 
-### `client.move(key, dbIndex, callback)`
+### client.move(key, dbIndex, callback)
 Moves `key` from the currently selected DB to the `dbIndex` DB.
 You can use `client.move` as a locking primitive.
 Passes `1` to `callback` if `key` was moved successfully.
@@ -236,14 +236,14 @@ was not found at all.
         console.log(!!didSucceed);
     });
 
-### `client.flushdb(callback)`
+### client.flushdb(callback)
 Deletes all the keys of the currently selected DB. The command never fails.
 Passes `true` to `callback`.
     client.flushdb( function (err, didSucceed) {
         console.log(didSucceed); // true
     });
 
-### `client.flushall(callback)`
+### client.flushall(callback)
 Deletes all the keys of all the existing databases, not just the currently
 selected one. This command never fails.
 Passes `true` to `callback`.
