@@ -87,20 +87,31 @@ You can pass in an options hash, too.  They default to:
 The redis-node client emits important events related to the connection with the Redis
 server. You can bind an event handler to any of the following events:
 - `connected`
+
   Emitted when the client successfully makes a connection FOR THE FIRST TIME. 
   You usually will not need to bind an event handler to `connected` because the 
   client takes care of queueing up any commands you send it and flushes them 
   to the Redis server once it is connected.
+
 - `disconnected`
+
   Emitted when we drop a connection with the Redis server. This can happen if the
   connection times out due to no recent activity from the client.
+
 - `reconnecting`
+
   Emitted just before the client attempts to reconnect to the Redis server.
+
 - `reconnected`
+
   Emitted when the client successfully makes a successful reconnection.
+
 - `noconnection`
+
   Emitted when the client gives up its connection attempts.
+
 - `connection error`
+
   Emitted when the there is an error that is a result of the connection with the
   Redis server. The error object is passed to `callback`. If you do not register
   a listener with this event, then the error is thrown and the program exits.
