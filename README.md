@@ -86,6 +86,7 @@ You can pass in an options hash, too.  They default to:
 ## Events
 The redis-node client emits important events related to the connection with the Redis
 server. You can bind an event handler to any of the following events:
+  
 - `connected`
 
   Emitted when the client successfully makes a connection FOR THE FIRST TIME. 
