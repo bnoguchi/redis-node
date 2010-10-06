@@ -63,6 +63,18 @@ vows.describe("Redis General Commands").addBatch({
             }
         },
 
+        'on multiple existing keys via array': {
+            topic: function (client) {
+                client.set("key-to-del-3", "foo");
+                client.set("key-to-del-4", "foo");
+                client.del(["key-to-del-3", "key-to-del-4"], this.callback);
+            },
+
+            'should return 2': function (err, value) {
+                assert.equal(value, 2);
+            }
+        },
+
         'on a non-existent key': {
             topic: function (client) {
                 client.del("non-existent-key", this.callback);

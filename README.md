@@ -13,21 +13,8 @@ Blog post coming.
 - Idiomatic command syntax.
 - Automatic re-establishment of connections to the Redis server.
 
-### Dependencies
-The Vows Testing Framework:
-From git:
-    git clone http://github.com/cloudhead/vows.git
-Or from npm:
-    npm install vows
-
 ### Installation
-From npm:
     npm install redis-node
-
-OR
-
-From git:
-    git clone http://github.com/bnoguchi/redis-node.git
 
 ### A Quick Tour
     var redis = require("redis-node");
@@ -263,6 +250,19 @@ Passes `true` to `callback`.
         console.log(didSucceed); // true
     });
 
+## Commands operating on all value types
+
+### client.set(key, value, callback)
+Sets `key` to `value`. `value` can be a String, Number, or Buffer.
+Passes `true` to `callback`.
+    client.set("key", "value", function (err, didSet) {
+        console.log(didSet); // true
+    });
+
+### client.get(key, callback)
+Passes the Buffer value at `key` to callback if the key exists.
+Passes null to `callback` if `key` does not exist.
+
 # Test Coverage
 See [./test/](http://github.com/bnoguchi/redis-node) for the list of tests.
 To run the tests from the command line.
@@ -280,6 +280,9 @@ To run the tests from the command line.
 # Other Redis Clients for Node.js
 - [redis-node-client](http://github.com/fictorial/redis-node-client)
 - [node_redis](http://github.com/mranney/node_redis)
+
+### 3rd Party Libraries
+- [Vows Testing Framework](http://github.com/cloudhead/vows)
 
 ### License
 MIT License
