@@ -217,11 +217,23 @@ vows.describe("Redis Set Commands").addBatch({
             [5, 100, 101, 102].forEach( function (n) {
                 client.sadd('set-16', n);
             });
-            
-            client.sinter('set-14', 'set-15', 'set-16', this.callback);
+            return client;
         },
-        'should return the intersection': function (err, intersection) {
-            assert.deepEqual(intersection, ['5']);
+        'on multiple existing keys': {
+            topic: function (client) {
+                client.sinter('set-14', 'set-15', 'set-16', this.callback);
+            },
+            'should return the intersection': function (err, intersection) {
+                assert.deepEqual(intersection, ['5']);
+            }
+        },
+        'on multiple existing keys via array': {
+            topic: function (_, client) {
+                client.sinter(['set-14', 'set-15', 'set-16'], this.callback);
+            },
+            'should return the intersection': function (err, intersection) {
+                assert.deepEqual(intersection, ['5']);
+            }
         }
     }),
 
@@ -265,14 +277,29 @@ vows.describe("Redis Set Commands").addBatch({
             [5, 100, 101, 102].forEach( function (n) {
                 client.sadd('set-22', n);
             });
-            
-            client.sunion('set-20', 'set-21', 'set-22', this.callback);
+            return client;
         },
-        'should return the union': function (err, intersection) {
-            assert.length(intersection, 11);
-            [1, 2, 3, 4, 5, 6, 7, 8, 100, 101, 102].forEach( function (n) {
-                assert.include(intersection, n.toString());
-            });
+        'on multiple existing keys': {
+            topic: function (client) {
+                client.sunion('set-20', 'set-21', 'set-22', this.callback);
+            },
+            'should return the union': function (err, intersection) {
+                assert.length(intersection, 11);
+                [1, 2, 3, 4, 5, 6, 7, 8, 100, 101, 102].forEach( function (n) {
+                    assert.include(intersection, n.toString());
+                });
+            }
+        },
+        'on multiple existing keys via array': {
+            topic: function (_, client) {
+                client.sunion(['set-20', 'set-21', 'set-22'], this.callback);
+            },
+            'should return the union': function (err, intersection) {
+                assert.length(intersection, 11);
+                [1, 2, 3, 4, 5, 6, 7, 8, 100, 101, 102].forEach( function (n) {
+                    assert.include(intersection, n.toString());
+                });
+            }
         }
     }),
 
