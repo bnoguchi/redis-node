@@ -23,13 +23,13 @@ vows.describe("Redis PubSub Commands").addBatch({
             pubClient.select(6);
             subClient.subscribeTo("channel-1", this.callback);
             subClient.addListener("connected", function () {
-                pubClient.publish("channel-1", "I'm the 1st message");
+                pubClient.publish("channel-1", JSON.stringify({a: 1}));
             });
         },
 
         'should send the message and channel to the subscriber': function (channel, msg) {
             assert.equal(channel, "channel-1");
-            assert.equal(msg, "I'm the 1st message");
+            assert.deepEqual(JSON.parse(msg), {a: 1});
         }
     },
 
