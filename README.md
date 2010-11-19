@@ -265,8 +265,15 @@ Passes the Buffer value at `key` to callback if the key exists.
 Passes null to `callback` if `key` does not exist.
 
 # Test Coverage
-See [./test/](http://github.com/bnoguchi/redis-node) for the list of tests.
-To run the tests from the command line.
+See [./test/](https://github.com/bnoguchi/redis-node) for the list of tests.
+Currently, the tests are implemented via the [Vows](https://github.com/cloudhead/vows).
+However, the tests will only work with my fork of vows, so install my branch to see the tests pass:
+    git clone git://github.com/bnoguchi/vows.git
+    git checkout teardownFix
+    npm install
+Then, to run the tests from the command line.
+    make test
+You can also run the tests directly with the vows binary from the command line.
     vows test/*.vows.js
 
 # Coming Sooner or Later
