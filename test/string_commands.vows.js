@@ -42,6 +42,19 @@ vows.describe("Redis String Commands").addBatch({
         }
     }),
 
+    'setting and getting special characters': usingClient({
+        topic: function (client) {
+            var specialJson = JSON.stringify({'a': 'ö'});
+            client.set("special-json", specialJson);
+            client.get("special-json", this.callback);
+        },
+
+        'should return the same special characters': function (err, result) {
+            var specialJson = JSON.stringify({'a': 'ö'});
+            assert.equal(result, specialJson);
+        }
+    }),
+
     'setting and getting multiple bytes': usingClient({
         topic: function (client) {
             var testValue = '\u00F6\u65E5\u672C\u8A9E', // ö日本語
