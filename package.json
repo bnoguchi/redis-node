@@ -1,7 +1,7 @@
 {
   "name": "redis-node",
   "description": "A Complete Redis Client for Node.js",
-  "version": "0.2.5",
+  "version": "0.2.6",
   "keywords": [ "redis", "node", "client", "redis-client", "redis-node" ],
   "author": "Brian Noguchi <brian.noguchi@gmail.com>",
   "contributors": [
