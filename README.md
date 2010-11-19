@@ -17,6 +17,7 @@ Blog post coming.
     npm install redis-node
 
 ### A Quick Tour
+    // See ./examples/tour.js
     var sys = require("sys");
     var redis = require("redis-node");
     var client = redis.createClient();    // Create the client
@@ -59,6 +60,11 @@ Blog post coming.
     client.transaction( function () {
       client.set("I'm missing a 2nd argument"); // Our client with automatically discard the transaction
     });
+
+    // Close the connection
+    setTimeout( function () {
+        client.close();
+    }, 1000);
 
 See test/ for examples of each command.
 
