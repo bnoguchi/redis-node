@@ -17,6 +17,7 @@ Blog post coming.
     npm install redis-node
 
 ### A Quick Tour
+    var sys = require("sys");
     var redis = require("redis-node");
     var client = redis.createClient();    // Create the client
     client.select(2);                     // Select database 2
