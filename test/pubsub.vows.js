@@ -5,40 +5,40 @@ var vows = require("vows"),
     sys = require("sys");
 
 vows.describe("Redis PubSub Commands").addBatch({
-    'publishing': {
-        topic: function () {
-            var client = redis.createClient();
-            client.select(6);
+    'publishing': usingClient.gen()({
+        topic: function (client) {
             client.publish("channel-2", "sending this to no-one", this.callback);
         },
         'should return the number of clients who received the message': function (err, numReceiving) {
             assert.equal(numReceiving, 0);
         }
-    },
+    }),
+
     'publishing to a subscribed channel': {
         topic: function () {
-            var subClient = redis.createClient(),
-                pubClient = redis.createClient();
+            var subClient = this.subClient = redis.createClient(),
+                pubClient = this.pubClient = redis.createClient();
             subClient.select(6);
             pubClient.select(6);
             subClient.subscribeTo("channel-1", this.callback);
-            subClient.addListener("connected", function () {
+            setTimeout( function () {
                 pubClient.publish("channel-1", JSON.stringify({a: 1}));
-            });
+            }, 1000);
         },
 
         'should send the message and channel to the subscriber': function (channel, msg) {
             assert.equal(channel, "channel-1");
             assert.deepEqual(JSON.parse(msg), {a: 1});
+        },
+        teardown: function () {
+            this.subClient.close();
+            this.pubClient.close();
+            delete this.subClient;
+            delete this.pubClient;
         }
     },
 
-    'subscribe and unsubscribe': {
-        topic: function () {
-            var client = redis.createClient();
-            client.select(6);
-            return client;
-        },
+    'subscribe and unsubscribe': usingClient.gen()({
         'subscribing': {
             topic: function (client) {
                 client.subscribe("channel-3");
@@ -57,14 +57,9 @@ vows.describe("Redis PubSub Commands").addBatch({
                 }
             }
         }
-    },
+    }),
 
-    'psubscribe and punsubscribe': {
-        topic: function () {
-            var client = redis.createClient();
-            client.select(6);
-            return client;
-        },
+    'psubscribe and punsubscribe': usingClient.gen()({
         'psubscribing': {
             topic: function (client) {
                 client.psubscribe("channel-5.*", this.callback);
@@ -81,5 +76,5 @@ vows.describe("Redis PubSub Commands").addBatch({
                 }
             }
         }
-    }
+    })
 }).export(module, {error: false});

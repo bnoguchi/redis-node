@@ -1,5 +1,5 @@
 var vows = require("vows"),
-    usingClient = require("./utils").usingClient,
+    usingClient = require("./utils").usingClient.gen(),
     assert = require("assert"),
     redis = require("../lib/redis");
 
@@ -366,13 +366,17 @@ vows.describe("Redis List Commands").addBatch({
 
             'and then an element is pushed onto that list by another client': {
                 topic: function (_, client) {
-                    var client2 = redis.createClient();
+                    var client2 = this.client2 = redis.createClient();
                     client2.select(6);
                     client.blpop("list-to-add-1-to", 2, this.callback);
                     client2.rpush("list-to-add-1-to", "just-in-time");
                 },
                 'should pop off the newly pushed element and return [key, elt]': function (err, result) {
                     assert.deepEqual(result, ["list-to-add-1-to", "just-in-time"]);
+                },
+                teardown: function () {
+                    this.client2.close();
+                    delete this.client2;
                 }
             }
         },

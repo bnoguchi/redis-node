@@ -1,5 +1,5 @@
 var vows = require("vows"),
-    usingClient = require("./utils").usingClient,
+    usingClient = require("./utils").usingClient.gen(),
     assert = require("assert"),
     redis = require("../lib/redis");
 

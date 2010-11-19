@@ -1,5 +1,8 @@
 var vows = require("vows"),
-    usingClient = require("./utils").usingClient,
+    usingClientFactory = require("./utils").usingClient,
+    usingClient = usingClientFactory.gen(),
+    usingClient2 = usingClientFactory.gen(),
+    usingClient3 = usingClientFactory.gen(),
     assert = require("assert"),
     redis = require("../lib/redis");
 
@@ -7,12 +10,16 @@ var vows = require("vows"),
 vows.describe("Redis General Commands").addBatch({
     'selecting a new DB': {
         topic: function () {
-            var client = redis.createClient();
+            var client = this.client = redis.createClient();
             client.select(6, this.callback);
         },
 
         'should return true': function (err, result) {
             assert.isTrue(result);
+        },
+        teardown: function () {
+            this.client.close();
+            delete this.client;
         }
     },
 
@@ -157,7 +164,7 @@ vows.describe("Redis General Commands").addBatch({
 
         'using * pattern matching': {
             topic: function (client) {
-                var client2 = redis.createClient();
+                var client2 = this.client2 = redis.createClient();
                 client2.select(7);
                 client2.set("a", 1);
                 client2.set("b", 2);
@@ -171,12 +178,16 @@ vows.describe("Redis General Commands").addBatch({
                 ["a", "b", "the 3rd key"].forEach( function (val) {
                     assert.include(list, val);
                 });
+            },
+            teardown: function () {
+                this.client2.close();
+                delete this.client2;
             }
         },
 
         'using ? pattern matching': {
             topic: function (client) {
-                var client2 = redis.createClient();
+                var client2 = this.client2 = redis.createClient();
                 client2.select(8);
                 client2.set("bar", 1);
                 client2.set("car", 2);
@@ -191,13 +202,18 @@ vows.describe("Redis General Commands").addBatch({
                 ["bar", "car", "dar", "far"].forEach( function (val) {
                     assert.include(list, val);
                 });
+            },
+
+            teardown: function () {
+                this.client2.close();
+                delete this.client2;
             }
         }
     }),
 
     'the command RANDOMKEY': usingClient({
         topic: function (client) {
-            var client2 = redis.createClient();
+            var client2 = this.client2 = redis.createClient();
             client2.select(9);
             client2.set("foo", "bar");
             client2.set("hello", "world");
@@ -207,6 +223,11 @@ vows.describe("Redis General Commands").addBatch({
 
         'should return a random key': function (err, key) {
             assert.match(key, /^(foo|hello)$/);
+        },
+        
+        teardown: function () {
+            this.client2.close();
+            delete this.client2;
         }
     }),
 
@@ -310,13 +331,17 @@ vows.describe("Redis General Commands").addBatch({
                 },
                 'after moving, when in the destination database': {
                     topic: function (_, _, client) {
-                        var client2 = redis.createClient();
+                        var client2 = this.client2 = redis.createClient();
                         client2.select(5);
                         client2.lrange("db-moving-key", 0, -1, this.callback);
                         client2.flushdb();
                     },
                     'should appear in the destination database': function (err, list) {
                         assert.deepEqual(list, ["a"]);
+                    },
+                    teardown: function () {
+                        this.client2.close();
+                        delete this.client2;
                     }
                 },
             }
@@ -345,7 +370,7 @@ vows.describe("Redis General Commands").addBatch({
         })
     }
 }).addBatch({
-    'the command DBSIZE': usingClient({
+    'the command DBSIZE': usingClient2({
         topic: function (client) {
             client.flushdb();
             client.set("foo", "bar");
@@ -358,7 +383,7 @@ vows.describe("Redis General Commands").addBatch({
         }
     })
 }).addBatch({
-    'the command EXPIRE': usingClient({
+    'the command EXPIRE': usingClient3({
         'on a key without a current expiry': {
             topic: function (client) {
                 client.set("to-expire", "foo");
@@ -416,7 +441,7 @@ vows.describe("Redis General Commands").addBatch({
 
     // TODO PERSIST
     // TODO Allow passing a date object to EXPIREAT
-    'the command EXPIREAT': usingClient({
+    'the command EXPIREAT': usingClient3({
         'on a key without a current expiry': {
             topic: function (client) {
                 client.set("to-expireat", "foo");
@@ -472,7 +497,7 @@ vows.describe("Redis General Commands").addBatch({
         }
     }),
 
-    'the command TTL': usingClient({
+    'the command TTL': usingClient3({
         'for a key with no expiry': {
             topic: function (client) {
                 client.set("ttl-1", "foo");

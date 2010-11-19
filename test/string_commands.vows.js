@@ -1,5 +1,6 @@
 var vows = require("vows"),
-    usingClient = require("./utils").usingClient,
+    usingClient = require("./utils").usingClient.gen(),
+    usingClient2 = require("./utils").usingClient.gen(),
     assert = require("assert"),
     redis = require("../lib/redis"),
     fs = require("fs"),
@@ -350,7 +351,7 @@ vows.describe("Redis String Commands").addBatch({
         }
     })
 }).addBatch({
-    'the command SETEX': usingClient({
+    'the command SETEX': usingClient2({
         topic: function (client) {
             client.setex("to-expire-1", 2, "foo", this.callback);
         },

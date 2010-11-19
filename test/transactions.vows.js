@@ -1,5 +1,5 @@
 var vows = require("vows"),
-    usingClient = require("./utils").usingClient,
+    usingClient = require("./utils").usingClient.gen(),
     assert = require("assert"),
     redis = require("../lib/redis");
 var sys = require("sys");
@@ -7,7 +7,7 @@ var sys = require("sys");
 vows.describe("Redis Transactions").addBatch({
     'with proper syntax': usingClient({
         topic: function (client) {
-            var simultClient = redis.createClient();
+            var simultClient = this.simultClient = redis.createClient();
             simultClient.select(6);
             var self = this;
             client.transaction( function () {
@@ -18,6 +18,10 @@ vows.describe("Redis Transactions").addBatch({
         },
         'should result in changes': function (err, count) {
             assert.equal(count, 3);
+        },
+        teardown: function () {
+            this.simultClient.close();
+            delete this.simultClient;
         }
     }),
     'with proper syntax with multibulk': usingClient({
