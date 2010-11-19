@@ -231,12 +231,22 @@ vows.describe("Redis Hash Commands").addBatch({
     }),
 
     'the command HGETALL': usingClient({
-        topic: function (client) {
-            client.hmset("hset-16", {foo: "bar", hello: "world"});
-            client.hgetall("hset-16", this.callback);
+        'on an existing hash': {
+            topic: function (client) {
+                client.hmset("hset-16", {foo: "bar", hello: "world"});
+                client.hgetall("hset-16", this.callback);
+            },
+            'should return the hash': function (err, hash) {
+                assert.deepEqual(hash, {foo: "bar", hello: "world"});
+            }
         },
-        'should return the hash': function (err, hash) {
-            assert.deepEqual(hash, {foo: "bar", hello: "world"});
+        'on a non-existent key': {
+            topic: function (client) {
+                client.hgetall("hset-non-existent", this.callback);
+            },
+            'should return null': function (err, hash) {
+                assert.isNull(hash);
+            }
         }
     })
 }).export(module, {});
