@@ -270,6 +270,18 @@ Passes `true` to `callback`.
 Passes the Buffer value at `key` to callback if the key exists.
 Passes null to `callback` if `key` does not exist.
 
+## MULTI/EXEC (aka transactions)
+
+### client.transaction(transactionBlock)
+Sends commands inside the function `transactionBlock` as a transaction. Behind the scenes, we precede the commands inside `transactionBlock` with a MULTI command and commit the commands with an EXEC command. If there is a syntax error with any of the commands sent in the transaction, EXEC will never be called; instead a DISCARD command will be sent to the Redis server to roll back the transaction.
+    client.transaction( function () {
+        client.rpush("txn", 1);
+        client.rpush("txn", 2);
+        client.rpush("txn", 3, function (err, count) {
+          console.log(count); // 3
+        });
+    });
+
 # Test Coverage
 See [./test/](https://github.com/bnoguchi/redis-node) for the list of tests.
 Currently, the tests are implemented via the [Vows](https://github.com/cloudhead/vows).
