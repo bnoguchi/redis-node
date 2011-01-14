@@ -1,0 +1,55 @@
+@import "compass";
+#github {
+  left: -65px;
+  height: 30px;
+  top: 40px;
+  position: absolute;
+  text-decoration: none;
+  width: 250px;
+  @include rotate(-45deg);
+  span {
+    background: black;
+    color: white;
+    font-size: 14px;
+    left: 0;
+    padding: 5px 0;
+    position: absolute;
+    text-align: center;
+    width: 250px;
+    @include box-shadow(rgba(black, 0.2), 1px, 1px, 10px);
+    @include transition(opacity, 1s);
+    &:last-child {
+      background: red;
+      opacity: 0;
+    }
+  }
+  span:hover {
+    &:first-child {
+      opacity: 0;
+    }
+    &:last-child {
+      opacity: 1;
+    }
+  }
+}
+
+@media all and (-webkit-transform-3d) {
+  #github {
+    span {
+      opacity: 1 !important;
+      -webkit-backface-visibility: hidden;
+      -webkit-transition: -webkit-transform 1s;
+      &:last-child {
+        -webkit-transform: rotateX(180deg);
+      }
+    }
+    &:hover span {
+      &:first-child {
+        -webkit-transform: rotateX(180deg);
+      }
+      &:last-child {
+        -webkit-transform: rotateX(360deg);
+      }
+    }
+  }
+}
