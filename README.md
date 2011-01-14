@@ -124,7 +124,7 @@ Passes `false` to callback if it does not.
 ### client.del(key1, key2, ..., keyn, callback)
 Delete a key.
 Passes the number of keys that were deleted to `callback`.
-    client.exists("key1", "key2", function (err, numRemoved) {
+    client.del("key1", "key2", function (err, numRemoved) {
         console.log(numRemoved); // 2
     });
 
