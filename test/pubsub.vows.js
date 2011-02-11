@@ -48,7 +48,7 @@ vows.describe("Redis PubSub Commands").addBatch({
                 assert.deepEqual(triple, ["subscribe", "channel-4", 2]);
             },
             'and then unsubscribing': {
-                topic: function (_, client) {
+                topic: function (_, triple, client) {
                     client.unsubscribe("channel-3");
                     client.unsubscribe("channel-4", this.callback);
                 },
@@ -68,7 +68,7 @@ vows.describe("Redis PubSub Commands").addBatch({
                 assert.deepEqual(triple, ["psubscribe", "channel-5.*", 1]);
             },
             'and then punsubscribing': {
-                topic: function (_, client) {
+                topic: function (_, triple, client) {
                     client.punsubscribe("channel-5.*", this.callback);
                 },
                 'should return [command type, channel, num channels subscribed to]': function (err, triple) {

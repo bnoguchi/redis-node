@@ -51,6 +51,8 @@ vows.describe("Redis String Commands").addBatch({
 
         'should return the same special characters': function (err, result) {
             var specialJson = JSON.stringify({'a': 'ö'});
+            console.log(specialJson);
+            console.log(specialJson.length);
             assert.equal(result, specialJson);
         }
     }),
@@ -106,7 +108,7 @@ vows.describe("Redis String Commands").addBatch({
                 path = paths.shift();
               }
             }
-            var imageBuffer = new Buffer(Buffer.byteLength(fileContents));
+            var imageBuffer = new Buffer(Buffer.byteLength(fileContents, 'binary'));
             imageBuffer.write(fileContents, 0, "binary");
 
             client.set('png_image', imageBuffer, this.callback);
@@ -129,7 +131,7 @@ vows.describe("Redis String Commands").addBatch({
                     path = paths.shift();
                   }
                 }
-                var imageBuffer = new Buffer(Buffer.byteLength(fileContents));
+                var imageBuffer = new Buffer(Buffer.byteLength(fileContents, 'binary'));
                 imageBuffer.write(fileContents, 0, "binary");
 
                 // TODO Make value binary a Buffer vs the current binary string?
