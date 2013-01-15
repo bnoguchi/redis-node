@@ -17,6 +17,7 @@ Blog post coming.
     npm install redis-node
 
 ### A Quick Tour
+```javascript
     // See ./examples/tour.js
     var sys = require("sys");
     var redis = require("redis-node");
@@ -65,6 +66,7 @@ Blog post coming.
     setTimeout( function () {
         client.close();
     }, 1000);
+```
 
 See test/ for examples of each command.
 
@@ -117,16 +119,20 @@ server. You can bind an event handler to any of the following events:
 Test if a key exists.
 Passes `true` to callback if it exists.
 Passes `false` to callback if it does not.
+```javascript
     client.exists("some-key", function (err, doesExist) {
         console.log(doesExist);
     });
+```
 
 ### client.del(key1, key2, ..., keyn, callback)
 Delete a key.
 Passes the number of keys that were deleted to `callback`.
+```javascript
     client.del("key1", "key2", function (err, numRemoved) {
         console.log(numRemoved); // 2
     });
+```
 
 ### client.type(key, callback)
 Passes the type of value stored at key to `callback`. One of:
@@ -136,12 +142,16 @@ Passes the type of value stored at key to `callback`. One of:
 - `set` if the key contains a `Set` value
 - `zset` if the key contains a `Sorted Set` value
 - `hash` if the key contains a `Hash` value
+
+```javascript
     client.type("key-with-string", function (err, type) {
         console.log(type); // Either: 'none', 'string', 'list', 'set', 'zset', or 'hash'
     });
+```
 
 ### client.keys(pattern, callback)
 Passes all the keys matching a given pattern to `callback`.
+```javascript
     // The * pattern returns an array of all keys
     client.keys("*", function (err, arrayOfKeys) {
         arrayOfKeys.forEach( function (key) {
@@ -162,35 +172,39 @@ Passes all the keys matching a given pattern to `callback`.
             console.log(key); // e.g., 'car', 'bar', 'far'
         });
     });
-
+```
 ### client.randomkey(callback)
 Passes a random key from the key space to `callback`.
+```javascript
     client.randomkey( function (err, key) {
         console.log(key);
     });
-
+```
 ### client.rename(oldName, newName, callback)
 Renames the old key name `oldName` to the new key name `newName`
 Passes `true` to `callback`.
+```javascript
     client.rename("old", "new", function (err, didSucceed) {
         console.log(didSucceed); // true
     });
-
+```
 ### client.renamenx(oldName, newName, callback)
 Renames the old key name `oldName` to the new key name `newName`,
 if the `newName` key does not already exist.
 Passes `1` if `newName` key did not already exist, to `callback`.
 Passes `0` if `newName` key did already exist, to `callback`.
+```javascript
     client.renamenx("old", "new", function (err, didSucceed) {
         console.log(!!didSucceed); // true
     });
-
+```
 ### client.dbsize(callback)
 Passes the number of keys in the current db.
+```javascript
     client.dbsize( function (err, numKeys) {
         console.log(numKeys);
     });
-
+```
 ### client.expire(key, ttl, callback)
 Tells Redis to delete the `key` after `ttl` seconds.
 If we are using Redis < 2.1.3 and if a `ttl` was already set with 
@@ -205,67 +219,75 @@ the `client.set(key, value)` command or when a key is destroyed via the
 Passes `1` to `callback` if `key` has no current `ttl` expiry.
 Passes `0` to `callback` if `key` does not exist or if we
 are using Redis < 2.1.3, and `key` already has a current `ttl` expiry.
+```javascript
     client.expire("key", 2, function (err, didSetExpiry) {
         console.log(!!didSetExpiry);
     });
-
+```
 ### client.expireat(key, unixtime, callback)
 Tells Redis to delete the `key` at the `unixtime` datetime in the future.
 Works similarly to `client.expire(key, ttl, callback)`
+```javascript
     client.expireat("key", parseInt((+new Date) / 1000, 10) + 2, function (err, didSetExpiry) {
         console.log(didSetExpiry);
     });
-
+```
 ### client.ttl(key, callback)
 Gets the time to live (i.e., how many seconds before `key` expires) in seconds
 of `key`.
 Passes the number of seconds before `key` expires to `callback`.
 Passes `-1` to `callback` if `key` has no ttl expiry.
+```javascript
     client.ttl("key", function (err, ttl) {
         console.log(ttl);
     });
-
+```
 ### client.select(dbIndex, callback)
 Selects the DB with the specified `dbIndex`.
 Passes `true` to `callback`.
+```javascript
     client.select(2, function (err, didSucceed) {
         console.log(didSucceed); // true
     });
-
+```
 ### client.move(key, dbIndex, callback)
 Moves `key` from the currently selected DB to the `dbIndex` DB.
 You can use `client.move` as a locking primitive.
 Passes `1` to `callback` if `key` was moved successfully.
 Passes `0` if the target `key` was already there or if the source `key`
 was not found at all.
+```javascript
     client.move("key", 3, function (err, didSucceed) {
         console.log(!!didSucceed);
     });
-
+```
 ### client.flushdb(callback)
 Deletes all the keys of the currently selected DB. The command never fails.
 Passes `true` to `callback`.
+```javascript
     client.flushdb( function (err, didSucceed) {
         console.log(didSucceed); // true
     });
-
+```
 ### client.flushall(callback)
 Deletes all the keys of all the existing databases, not just the currently
 selected one. This command never fails.
 Passes `true` to `callback`.
+```javascript
     client.flushall( function (didSucceed) {
         console.log(didSucceed); // true
     });
-
+```
 ## Commands operating on all value types
 
 ### client.set(key, value, callback)
 Sets `key` to `value`. `value` can be a String, Number, or Buffer.
 Passes `true` to `callback`.
+```javascript
     client.set("key", "value", function (err, didSet) {
         console.log(didSet); // true
     });
-
+```
 ### client.get(key, callback)
 Passes the Buffer value at `key` to callback if the key exists.
 Passes null to `callback` if `key` does not exist.
@@ -274,6 +296,7 @@ Passes null to `callback` if `key` does not exist.
 
 ### client.transaction(transactionBlock)
 Sends commands inside the function `transactionBlock` as a transaction. Behind the scenes, we precede the commands inside `transactionBlock` with a MULTI command and commit the commands with an EXEC command. If there is a syntax error with any of the commands sent in the transaction, EXEC will never be called; instead a DISCARD command will be sent to the Redis server to roll back the transaction.
+```javascript
     client.transaction( function () {
         client.rpush("txn", 1);
         client.rpush("txn", 2);
@@ -281,7 +304,7 @@ Sends commands inside the function `transactionBlock` as a transaction. Behind t
           console.log(count); // 3
         });
     });
-
+```
 # Test Coverage
 See [./test/](https://github.com/bnoguchi/redis-node) for the list of tests.
 Currently, the tests are implemented via the [Vows](https://github.com/cloudhead/vows).
